@@ -34,9 +34,9 @@
 								<inputType id="cdt.managedbuild.tool.sdcc.c.compiler.input.1721099491" superClass="cdt.managedbuild.tool.sdcc.c.compiler.input"/>
 							</tool>
 							<tool command="sdcc --stack-auto" id="cdt.managedbuild.tool.sdcc.c.linker.exe.release.596135725" name="SDCC Linker" superClass="cdt.managedbuild.tool.sdcc.c.linker.exe.release">
-								<option id="sdcc.c.link.option.nostdlibs.1320041555" superClass="sdcc.c.link.option.nostdlibs" useByScannerDiscovery="false" value="false" valueType="boolean"/>
-								<option id="sdcc.c.link.option.nodeflibs.63221725" superClass="sdcc.c.link.option.nodeflibs" useByScannerDiscovery="false" value="false" valueType="boolean"/>
-								<option id="sdcc.c.link.option.nostart.2144785865" superClass="sdcc.c.link.option.nostart" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="sdcc.c.link.option.nostdlibs.1320041555" name="No startup or default libs (-nostdlib)" superClass="sdcc.c.link.option.nostdlibs" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="sdcc.c.link.option.nodeflibs.63221725" name="Do not use default libraries (-nodefaultlibs)" superClass="sdcc.c.link.option.nodeflibs" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="sdcc.c.link.option.nostart.2144785865" name="Do not use standard start files (-nostartfiles)" superClass="sdcc.c.link.option.nostart" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.sdcc.c.linker.input.601117241" superClass="cdt.managedbuild.tool.sdcc.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_RELS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
