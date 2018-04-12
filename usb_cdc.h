@@ -29,4 +29,7 @@ void CDC_SetBaud(void);
 void CDC_USB_Poll(void);
 void CDC_UART_Poll(void);
 
+void CDC_PutChar(uint8_t tdata);
+void CDC_Puts(char *str);
+
 #endif
