@@ -5,6 +5,7 @@
 	#ifndef __SDCC
 		#define __SDCC
 	#endif
+	#define __COMPILERSTR "SDCC"
 
 	// Use GCC defined standard types
 	#include <stdint.h>
@@ -23,6 +24,7 @@
 	#ifndef __C51__
 		#define __C51__
 	#endif
+	#define __COMPILERSTR "C51"
 
 	// Define standard types
 	#ifndef bool

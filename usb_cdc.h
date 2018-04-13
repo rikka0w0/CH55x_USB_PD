@@ -31,5 +31,7 @@ void CDC_UART_Poll(void);
 
 void CDC_PutChar(uint8_t tdata);
 void CDC_Puts(char *str);
+void CDC_Hex(uint8_t val);
+void CDC_HexDump(uint8_t* addr, uint8_t len);
 
 #endif

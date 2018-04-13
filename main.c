@@ -1,16 +1,14 @@
 #include "Delay.H"
 #include "usb_cdc.h"
+#include "usbpd_phy.h"
 
 #include "ch554_platform.h"
-
-extern void USBPD_Rx_Begin(void);
-extern void USBPD_Rx_InterruptHandler(void);
 
 void main(void) {
 	CDC_InitBaud();
     CH554_Init();
 	
-    USBPD_Rx_Begin();
+    USBPD_DFP_Init();
 
     while(1) {
     	CDC_USB_Poll();

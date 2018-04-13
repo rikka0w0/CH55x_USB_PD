@@ -5,8 +5,8 @@
 // Cable orientation
 #define USDPD_CO_MASK 	0x03
 #define USBPD_CO_NC 	0x00
-#define USBPD_CO_CC1 	0x01
-#define USBPD_CO_CC2 	0x02
+#define USBPD_CO_CC1 	0x01		// P1.4
+#define USBPD_CO_CC2 	0x02		// P1.5
 #define USBPD_CO_ERR	0x03		// If USBPD_CO == 0x03, USBPD_PWR is meaning less
 // Host current capacity
 #define USBPD_PWR_MASK 		0x0C

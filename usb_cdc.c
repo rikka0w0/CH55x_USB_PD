@@ -1,11 +1,11 @@
-#include "usb_cdc.h"
+ï»¿#include "usb_cdc.h"
 #include "usb_endp.h"
 #include <string.h>
 #include "bootloader.h"
+#include "usbpd_phy.h"
 
 #include "ch554_platform.h"
 
-//³õÊ¼»¯²¨ÌØÂÊÎª57600£¬1Í£Ö¹Î»£¬ÎÞÐ£Ñé£¬8Êý¾ÝÎ»¡£
 xdatabuf(LINECODING_ADDR, LineCoding, LINECODING_SIZE);
 
 // CDC Tx
@@ -95,6 +95,21 @@ void CDC_Puts(char *str) {
 		CDC_PutChar(*(str++));
 }
 
+code static const char hexvals[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+
+void CDC_Hex(uint8_t val) {
+	CDC_Puts("0x");
+	CDC_PutChar(hexvals[(val>>4)&0x0F]);
+	CDC_PutChar(hexvals[val&0x0F]);
+	CDC_Puts("\r\n");
+}
+
+void CDC_HexDump(uint8_t* addr, uint8_t len) {
+	uint8_t i;
+	for (i=0; i<len; i++)
+		CDC_Hex(addr[i]);
+}
+
 // Handles CDC_PutCharBuf and IN transfer
 void CDC_USB_Poll() {
 	static uint8_t usb_frame_count = 0;
@@ -166,7 +181,7 @@ void CDC_USB_Poll() {
 	}
 }
 
-
+extern uint8_t USBPD_ConnectionStatus;
 void CDC_UART_Poll() {
 	uint8_t cur_byte;
 	static uint8_t former_data = 0;		// Previous byte
@@ -206,6 +221,20 @@ void CDC_UART_Poll() {
 				CDC_PutChar(CDC_Baud % 100 / 10 + '0');
 				CDC_PutChar(CDC_Baud % 10 / 1 + '0');
 				CDC_Puts("\r\n");
+			} else if (cur_byte == 'C') {
+				CDC_Puts(__COMPILERSTR);
+				CDC_Puts("\r\n");
+			} else if(cur_byte == 'D') {
+				USBPD_DFP_CC_Detect();
+				CDC_Hex(USBPD_ConnectionStatus);
+			} else if (cur_byte == 'S') {
+				CDC_Puts("PIN_FUNC=");
+				CDC_Hex(PIN_FUNC);
+				USBPD_Rx_Begin();
+				CDC_Puts("Rx_Begin: GPIO_IE=");
+				CDC_Hex(GPIO_IE);
+			} else if (cur_byte == 'Z') {
+				CDC_Hex(CMPO);
 			}
 
 			else if(cur_byte == 'T' && former_data == 'A') {
