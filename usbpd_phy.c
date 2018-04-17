@@ -9,8 +9,8 @@ SBIT(USBPD_CC_PIN, GPIO1, 4);
 SBIT(LED, GPIO1, 7);
 
 xdatabuf(0xD1, USBPD_RawDatBuf, 512);
+uint8_t* USBPD_RawDatBuf_End;
 uint8_t USBPD_ConnectionStatus;
-uint8_t USBPD_RawDatBuf_Ptr;
 uint8_t USBPD_PortStatus;
 
 void USBPD_Rx_Begin(void) {
@@ -40,50 +40,67 @@ void USBPD_Rx_Begin(void) {
 }
 
 void USBPD_Rx_InterruptHandler(void) {
-	static uint16_t last_cnt;
-	static uint16_t this_cnt;
-	static uint16_t this_cnt2;
-	static uint16_t this_cnt3;
-
 	GPIO_IE &= ~(bIE_IO_EDGE | bIE_P1_4_LO);
 	IE_GPIO = 0;
 
-	F1 = USBPD_CC_PIN;
-	while (F1 == USBPD_CC_PIN);
-
 	TR0 = 1;	// Enable Timer0
 
-	F1 = USBPD_CC_PIN;
-	while (F1 == USBPD_CC_PIN);
-	last_cnt = (TH0<<8)|TL0;
-
-	F1 = USBPD_CC_PIN;
-	while (F1 == USBPD_CC_PIN);
-	this_cnt = (TH0<<8)|TL0;
-
-	F1 = USBPD_CC_PIN;
-	while (F1 == USBPD_CC_PIN);
-	this_cnt2 = (TH0<<8)|TL0;
-
-	F1 = USBPD_CC_PIN;
-	while (F1 == USBPD_CC_PIN);
-	this_cnt3 = (TH0<<8)|TL0;
-
 	__asm
-	clr	_LED
+	mov	dpl,#_USBPD_RawDatBuf
+	mov	dph,#(_USBPD_RawDatBuf >> 8)
 	__endasm;
 
-	CDC_Puts("QAQ\r\n");
-	CDC_Hex((last_cnt>>8)&0xFF);
-	CDC_Hex(last_cnt&0xFF);
-	CDC_Hex((this_cnt>>8)&0xFF);
-	CDC_Hex(this_cnt&0xFF);
-	CDC_Hex((this_cnt2>>8)&0xFF);
-	CDC_Hex(this_cnt2&0xFF);
-	CDC_Hex((this_cnt3>>8)&0xFF);
-	CDC_Hex(this_cnt3&0xFF);
+
+	for (uint8_t i=0; i<5; i++) {
+		F1 = USBPD_CC_PIN;
+		while (F1 == USBPD_CC_PIN);
+		__asm
+		mov a, _TL0
+		movx @dptr, a
+		inc dptr
+
+		clr	_LED
+		__endasm;
+
+		F1 = USBPD_CC_PIN;
+		while (F1 == USBPD_CC_PIN);
+		__asm
+		mov a, _TL0
+		movx @dptr, a
+		inc dptr
+
+		setb	_LED
+		__endasm;
+
+		F1 = USBPD_CC_PIN;
+		while (F1 == USBPD_CC_PIN);
+		__asm
+		mov a, _TL0
+		movx @dptr, a
+		inc dptr
+
+		clr	_LED
+		__endasm;
+
+		F1 = USBPD_CC_PIN;
+		while (F1 == USBPD_CC_PIN);
+		__asm
+		mov a, _TL0
+		movx @dptr, a
+		inc dptr
+
+		setb	_LED
+		__endasm;
+	}
+	__asm
+		mov	_USBPD_RawDatBuf_End,_DPL
+		mov (_USBPD_RawDatBuf_End+1), _DPH
+	__endasm;
 
 	TR0 = 0;
+
+
+	USBPD_PortStatus = USBPD_STATUS_RECEIVED;
 	// Decision rule: (3.03+3.07)/2/2*1.5=2.52375uS, ~60 cycles
 
 	/*
@@ -163,6 +180,9 @@ void USBPD_DFP_Init(void) {
 }
 
 void USBPD_DFP_CC_Poll() {
+	uint8_t len;
+	uint8_t last;
+	uint8_t cur;
 	if (USBPD_PortStatus == USBPD_STATUS_WAITING) {
 		USBPD_DFP_CC_Detect();
 		if (USBPD_ConnectionStatus & USBPD_CO_CC2) {
@@ -186,9 +206,35 @@ void USBPD_DFP_CC_Poll() {
 				TR0 = 1;	// Enable Timer0
 			}
 		}
-	} else if (USBPD_PortStatus == USBPD_STATUS_CONNECTED) {
-		if (CMPO == 0) {
-			//CDC_Puts("CMP0=0\r\n");
+	} else if (USBPD_PortStatus == USBPD_STATUS_RECEIVED) {
+		USBPD_PortStatus = USBPD_STATUS_IDLE;
+
+		len = USBPD_RawDatBuf_End - USBPD_RawDatBuf;
+		CDC_Puts("LEN=");
+		CDC_Hex(len);
+
+		last = USBPD_RawDatBuf[0];
+		for (uint8_t i=1; i<len; i++) {
+			cur = USBPD_RawDatBuf[i];
+			if (cur > last) {
+				last = cur - last;
+			} else {
+				last = 255 - last;
+				last += cur;
+				last ++;
+			}
+
+			if (last < 60) {
+				i++;
+				// Assume next is another narrow pulse
+				// Two narrow pulse -> An change in the middle of a frame-> 1
+
+				CDC_Hex(1);
+			} else {
+				CDC_Hex(0);
+			}
+
+			last = cur;
 		}
 	}
 }
