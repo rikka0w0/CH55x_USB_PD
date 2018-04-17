@@ -14,6 +14,13 @@
 #define USBPD_PWR_1A5		0x04
 #define USBPD_PWR_3A0		0x08
 #define USBPD_PWR_UNDEF		0x0C
+// Port Status
+#define USBPD_STATUS_MASK		0xF0
+#define USBPD_STATUS_IDLE		0x00
+#define USBPD_STATUS_WAITING	0x10
+#define USBPD_STATUS_ASSERTING	0x20
+#define USBPD_STATUS_CONNECTED	0x30
+
 
 // UFP CC line threshold value
 //	ICapaticy 	CC_Min		CC_Max
@@ -32,5 +39,7 @@ void USBPD_Rx_Begin(void);
 void USBPD_Rx_InterruptHandler(void);
 void USBPD_DFP_CC_Detect(void);
 void USBPD_DFP_Init(void);
+void USBPD_DFP_CC_Poll(void);
+void USBPD_DFP_CC_Assert(void);
 
 #endif /* __USBPD_PHY_H */

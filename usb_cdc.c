@@ -182,6 +182,7 @@ void CDC_USB_Poll() {
 }
 
 extern uint8_t USBPD_ConnectionStatus;
+extern uint8_t USBPD_PortStatus;
 void CDC_UART_Poll() {
 	uint8_t cur_byte;
 	static uint8_t former_data = 0;		// Previous byte
@@ -227,14 +228,10 @@ void CDC_UART_Poll() {
 			} else if(cur_byte == 'D') {
 				USBPD_DFP_CC_Detect();
 				CDC_Hex(USBPD_ConnectionStatus);
-			} else if (cur_byte == 'S') {
-				CDC_Puts("PIN_FUNC=");
-				CDC_Hex(PIN_FUNC);
+			} else if(cur_byte == 'S') {
+				USBPD_PortStatus = USBPD_STATUS_WAITING;
+			} else if(cur_byte == 'F') {
 				USBPD_Rx_Begin();
-				CDC_Puts("Rx_Begin: GPIO_IE=");
-				CDC_Hex(GPIO_IE);
-			} else if (cur_byte == 'Z') {
-				CDC_Hex(CMPO);
 			}
 
 			else if(cur_byte == 'T' && former_data == 'A') {

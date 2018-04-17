@@ -4,15 +4,19 @@
 
 #include "ch554_platform.h"
 
+extern uint8_t USBPD_PortStatus;
+
 void main(void) {
 	CDC_InitBaud();
     CH554_Init();
 	
     USBPD_DFP_Init();
+    USBPD_PortStatus = USBPD_STATUS_WAITING;
 
     while(1) {
     	CDC_USB_Poll();
     	CDC_UART_Poll();
+    	USBPD_DFP_CC_Poll();
     };
 }
 
@@ -27,4 +31,8 @@ void USBInterruptEntry(void) interrupt INT_NO_USB {
 
 void GPIOInterruptEntry(void) interrupt INT_NO_GPIO {
 	USBPD_Rx_InterruptHandler();
+}
+
+void Timer0InterruptEntry(void) interrupt INT_NO_TMR0 {
+	USBPD_DFP_CC_Assert();
 }
