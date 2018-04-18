@@ -36,7 +36,7 @@ void USBPD_Rx_Begin(void) {
 	// Enable GPIO interrupt
 	IE_GPIO = 1;
 
-	CDC_Hex(USBPD_ConnectionStatus);	// 0x0B
+	CDC_PutChar(USBPD_ConnectionStatus);
 }
 
 void USBPD_Rx_InterruptHandler(void) {
@@ -50,48 +50,45 @@ void USBPD_Rx_InterruptHandler(void) {
 	mov	dph,#(_USBPD_RawDatBuf >> 8)
 	__endasm;
 
-
-	for (uint8_t i=0; i<5; i++) {
-		F1 = USBPD_CC_PIN;
-		while (F1 == USBPD_CC_PIN);
+	for (uint8_t i=0; i<60; i++) {
+		while (USBPD_CC_PIN && !TF0);
 		__asm
-		mov a, _TL0
-		movx @dptr, a
-		inc dptr
-
 		clr	_LED
-		__endasm;
-
-		F1 = USBPD_CC_PIN;
-		while (F1 == USBPD_CC_PIN);
-		__asm
 		mov a, _TL0
 		movx @dptr, a
 		inc dptr
-
-		setb	_LED
+		setb _LED
 		__endasm;
 
-		F1 = USBPD_CC_PIN;
-		while (F1 == USBPD_CC_PIN);
+		while (!USBPD_CC_PIN && !TF0);
 		__asm
-		mov a, _TL0
-		movx @dptr, a
-		inc dptr
-
 		clr	_LED
-		__endasm;
-
-		F1 = USBPD_CC_PIN;
-		while (F1 == USBPD_CC_PIN);
-		__asm
 		mov a, _TL0
 		movx @dptr, a
 		inc dptr
+		setb _LED
+		__endasm;
 
-		setb	_LED
+		while (USBPD_CC_PIN && !TF0);
+		__asm
+		clr	_LED
+		mov a, _TL0
+		movx @dptr, a
+		inc dptr
+		setb _LED
+		__endasm;
+
+		while (!USBPD_CC_PIN && !TF0);
+		__asm
+		clr	_LED
+		mov a, _TL0
+		movx @dptr, a
+		inc dptr
+		setb _LED
 		__endasm;
 	}
+
+
 	__asm
 		mov	_USBPD_RawDatBuf_End,_DPL
 		mov (_USBPD_RawDatBuf_End+1), _DPH
@@ -101,23 +98,6 @@ void USBPD_Rx_InterruptHandler(void) {
 
 
 	USBPD_PortStatus = USBPD_STATUS_RECEIVED;
-	// Decision rule: (3.03+3.07)/2/2*1.5=2.52375uS, ~60 cycles
-
-	/*
-	 * 		TR0 = 0;
-		this_cnt = (TH0 << 8) | TL0;
-		TR0 = 1;
-		if (this_cnt-last_cnt > 60) {	// 4b5b 0
-			USBPD_RawDatBuf[USBPD_RawDatBuf_Ptr++] = 0;
-			last_half_1 = 0;
-		} else if (last_half_1){	// part of 4b5b 1
-			USBPD_RawDatBuf[USBPD_RawDatBuf_Ptr++] = 1;
-			last_half_1 = 0;
-		} else {
-			last_half_1 = 1;
-		}
-		last_cnt=this_cnt;
-	 */
 }
 
 /**
@@ -210,8 +190,7 @@ void USBPD_DFP_CC_Poll() {
 		USBPD_PortStatus = USBPD_STATUS_IDLE;
 
 		len = USBPD_RawDatBuf_End - USBPD_RawDatBuf;
-		CDC_Puts("LEN=");
-		CDC_Hex(len);
+		CDC_PutChar(len);
 
 		last = USBPD_RawDatBuf[0];
 		for (uint8_t i=1; i<len; i++) {
@@ -224,17 +203,19 @@ void USBPD_DFP_CC_Poll() {
 				last ++;
 			}
 
+			// Decision rule: (3.03+3.07)/2/2*1.5=2.52375uS, ~60 cycles
 			if (last < 60) {
 				i++;
 				// Assume next is another narrow pulse
 				// Two narrow pulse -> An change in the middle of a frame-> 1
-
-				CDC_Hex(1);
+				last = USBPD_RawDatBuf[i];
+				CDC_PutChar(1);
 			} else {
-				CDC_Hex(0);
+				last = cur;
+				CDC_PutChar(0);
 			}
 
-			last = cur;
+
 		}
 	}
 }
@@ -251,8 +232,6 @@ void USBPD_DFP_CC_Assert() {
 			USBPD_DFP_CC_Detect();
 			if (USBPD_ConnectionStatus & USBPD_CO_CC2) {
 				USBPD_PortStatus = USBPD_STATUS_CONNECTED;
-				CDC_Puts("CC2 connected\r\n");
-				//CDC_Hex(P1);	// 4F 0100 1111 P1.4=P1.5=0
 				USBPD_Rx_Begin();
 				return;
 			}
@@ -261,3 +240,32 @@ void USBPD_DFP_CC_Assert() {
 		USBPD_PortStatus = USBPD_STATUS_WAITING;
 	}
 }
+
+/*
+ * 		__asm
+		mov a, _TL0
+		mov r6, a	// cur = TL0
+
+		clr	c
+		subb a,r5	// > last
+		mov	r5,a	// last = cur - last
+		jnc	90001$		// If cur>last Jump to 90001$
+		mov a, #255
+		clr c
+		subb a, r5	// last = 255 - last
+		inc a		// last ++
+
+		90001$: // a = abs(cur - last)
+		clr c
+		subb a, #60	// CY = 1 -> abs()<60
+		clr a
+		rlc a
+		movx @dptr, a
+		inc dptr
+
+		mov a, r6
+		mov r5, a
+
+		setb _LED
+		__endasm;
+ */
