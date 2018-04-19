@@ -58,7 +58,7 @@ void USBDevice_Init() {
     UEP1_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK;
 	
 	//Configure Endpoint 2
-    UEP2_DMA_L = (uint8_t) Ep2Buffer;	// Address of Endpoint 2 buffer
+    UEP2_DMA_L = (uint8_t) EP2_RX_BUF;	// Address of Endpoint 2 buffer
     //UEP2_3_MOD = UEP2_3_MOD & ~bUEP2_BUF_MOD | bUEP2_TX_EN;
 	UEP2_3_MOD &=~bUEP2_BUF_MOD;	// Disable Endpoint2 buffer mode
 	UEP2_3_MOD |= bUEP2_TX_EN;		// Enable Endpoint2 Tx
@@ -135,3 +135,9 @@ void CH554_Init(void) {
 
 //void putchar(char data);
 //char getchar();
+
+// XRAM Allocation
+xdatabuf(EP2_RX_ADDR, EP2_RX_BUF, EP2_SIZE + 2);		// EP2 Rx
+xdatabuf(EP0_ADDR, Ep0Buffer, DEFAULT_ENDP0_SIZE + 2);	// EP0 Rx+Tx
+xdatabuf(LINECODING_ADDR, LineCoding, LINECODING_SIZE);	// LindCoding buffer
+xdatabuf(EP2_TX_ADDR, EP2_TX_BUF, EP2_SIZE);			// EP2 Tx

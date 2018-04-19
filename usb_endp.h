@@ -6,8 +6,6 @@ uint8_t USB_EP_HALT_SET(uint8_t ep);
 uint8_t USB_EP_HALT_CLEAR(uint8_t ep);
 
 // EP0
-#define EP0_ADDR 0x0000
-extern_xdatabuf(EP0_ADDR, Ep0Buffer);
 void USB_EP0_SETUP(void);
 void USB_EP0_IN(void);
 void USB_EP0_OUT(void);
@@ -16,11 +14,6 @@ void USB_EP0_OUT(void);
 // Always reply NAK for in transactions
 
 // EP2
-#define EP2_ADDR 0x0008
-extern_xdatabuf(EP2_ADDR, Ep2Buffer);
-#define EP2_SIZE 64
-#define EP2_RX_BUF (Ep2Buffer)
-#define EP2_TX_BUF (Ep2Buffer + EP2_SIZE)
 void USB_EP2_IN(void);
 void USB_EP2_OUT(void);
 

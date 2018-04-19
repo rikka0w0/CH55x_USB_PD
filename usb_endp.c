@@ -3,11 +3,6 @@
 
 #include "ch554_platform.h"
 
-#define MAX_PACKET_SIZE 64
-
-// The buffer (Tx and Rx) must have an even address, size: 128 (0x80)
-xdatabuf(EP2_ADDR, Ep2Buffer, EP2_SIZE + EP2_SIZE);	// Rx + Tx
-
 uint8_t USB_EP_HALT_SET(uint8_t ep) {
 	switch (ep) {
 	case 0x82:

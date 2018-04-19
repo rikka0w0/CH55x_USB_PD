@@ -150,6 +150,31 @@
 
 #include "ch554_conf.H"
 
+#ifdef CLOCK_FREQ_32
+#define FREQ_SYS 32000000
+#endif
+#ifdef CLOCK_FREQ_24
+#define FREQ_SYS 24000000
+#endif
+#ifdef CLOCK_FREQ_16
+#define FREQ_SYS 16000000
+#endif
+#ifdef CLOCK_FREQ_12
+#define FREQ_SYS 12000000
+#endif
+#ifdef CLOCK_FREQ_6
+#define FREQ_SYS 6000000
+#endif
+#ifdef CLOCK_FREQ_3
+#define FREQ_SYS 3000000
+#endif
+#ifdef CLOCK_FREQ_P750
+#define FREQ_SYS 750000
+#endif
+#ifdef CLOCK_FREQ_P1875
+#define FREQ_SYS 187500
+#endif
+
 #ifdef __SDCC
 	#include "include\ch554.h"
 	#include "include\ch554_usb.h"

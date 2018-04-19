@@ -6,7 +6,7 @@
 
 #include "ch554_platform.h"
 
-xdatabuf(LINECODING_ADDR, LineCoding, LINECODING_SIZE);
+
 
 // CDC Tx
 idata uint8_t  CDC_PutCharBuf[CDC_PUTCHARBUF_LEN];	// The buffer for CDC_PutChar

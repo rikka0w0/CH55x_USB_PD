@@ -15,14 +15,10 @@
 // CDC Rx state machine
 #define CDC_STATE_IDLE 0
 
-
-#define LINECODING_ADDR 0x88
-#define LINECODING_SIZE 7
-extern_xdatabuf(LINECODING_ADDR, LineCoding);
 extern uint32_t CDC_Baud;
 
 
-#define CDC_PUTCHARBUF_LEN  64
+#define CDC_PUTCHARBUF_LEN  16
 
 void CDC_InitBaud(void);
 void CDC_SetBaud(void);

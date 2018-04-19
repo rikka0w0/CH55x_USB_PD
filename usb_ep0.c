@@ -10,11 +10,6 @@
 #define USB_FEATURE_ENDPOINT_HALT 0						// Endpoint only
 #define USB_FEATURE_DEVICE_REMOTE_WAKEUP 1		// Device only
 
-#define USB_ENDP0_SIZE         DEFAULT_ENDP0_SIZE
-
-// The buffer (Tx and Rx) must have an even address, size: 8 (0x08)
-xdatabuf(EP0_ADDR, Ep0Buffer, DEFAULT_ENDP0_SIZE);
-
 #define UsbSetupBuf ((PUSB_SETUP_REQ)Ep0Buffer)
 
 uint8_t   SetupReq, SetupLen, UsbConfig;

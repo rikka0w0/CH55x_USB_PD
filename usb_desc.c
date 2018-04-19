@@ -123,7 +123,7 @@ code const uint8_t CfgDesc[] =
 						// D3:2 Synchronization Type: 00 = No Synchronization 01 = Asynchronous 10 = Adaptive 11 = Synchronous
 						// D5:4	Usage Type: 00 = Data endpoint 01 = Feedback endpoint 10 = Implicit feedback Data endpoint 11 = Reserved
 						// D7:6 = 0
-	0x40, 0x00,			// Maximum packet size can be handled
+	0x10, 0x00,			// Maximum packet size can be handled
 	0x00,				// Interval for polling, in units of 1 ms for low/full speed
 
 	// EndPoint descriptor (CDC Upload, Bulk)
@@ -136,6 +136,6 @@ code const uint8_t CfgDesc[] =
 						// D3:2 Synchronization Type: 00 = No Synchronization 01 = Asynchronous 10 = Adaptive 11 = Synchronous
 						// D5:4	Usage Type: 00 = Data endpoint 01 = Feedback endpoint 10 = Implicit feedback Data endpoint 11 = Reserved
 						// D7:6 = 0
-	0x40, 0x00,			// Maximum packet size can be handled
+	0x10, 0x00,			// Maximum packet size can be handled
 	0x00				// Interval for polling, in units of 1 ms for low/full speed
 };
