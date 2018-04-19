@@ -1,6 +1,16 @@
 #ifndef __USBPD_PHY_H
 #define __USBPD_PHY_H
 
+/*
+ * Maximum size of a Power Delivery packet (in bits on the wire) :
+ *    16-bit header + 0..7 32-bit data objects  (+ 4b5b encoding)
+ * 64-bit preamble + SOP (4x 5b) + message in 4b5b + 32-bit CRC + EOP (1x 5b)
+ * = 64 + 4*5 + 16 * 5/4 + 7 * 32 * 5/4 + 32 * 5/4 + 5
+ */
+#define USBPD_BIT_LEN 429
+#define USBPD_MAX_RAW_SIZE (USBPD_BIT_LEN*2)
+
+
 // USBPD_ConnectionStatus
 // Cable orientation
 #define USDPD_CO_MASK 	0x03

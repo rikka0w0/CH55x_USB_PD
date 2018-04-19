@@ -80,7 +80,7 @@ code const uint8_t CfgDesc[] =
 	// Set_Line_Coding,	Set_Control_Line_State, Get_Line_Coding, and the notification Serial_State.
 	// Bit2: SendBreak
 	// Bit3: NetworkConnection
-	// Ö§³ÖSet_Line_Coding¡¢Set_Control_Line_State¡¢Get_Line_Coding¡¢Serial_State
+	// Supports Set_Line_Coding, Set_Control_Line_State, Get_Line_Coding and Serial_State
 
 	// Union Functional Descriptor (CDC)
 	5,					// Length of the descriptor
@@ -99,7 +99,7 @@ code const uint8_t CfgDesc[] =
 						// D3:2 Synchronization Type: 00 = No Synchronization 01 = Asynchronous 10 = Adaptive 11 = Synchronous
 						// D5:4	Usage Type: 00 = Data endpoint 01 = Feedback endpoint 10 = Implicit feedback Data endpoint 11 = Reserved
 						// D7:6 = 0
-	0x10, 0x00,			// Maximum packet size can be handled
+	0x08, 0x00,			// Maximum packet size can be handled
 	0x40,				// Interval for polling, in units of 1 ms for low/full speed
 
 	// Interface descriptor (CDC)

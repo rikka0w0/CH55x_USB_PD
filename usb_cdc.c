@@ -45,11 +45,6 @@ void CDC_SetBaud(void) {
 		CDC_Baud = 57600;
 }
 
-void USB_EP1_IN(void) {
-	UEP1_T_LEN = 0;
-	UEP1_CTRL = UEP1_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK;
-}
-
 void USB_EP2_IN(void) {
 	UEP2_T_LEN = 0;
 	if (CDC_Tx_Full) {

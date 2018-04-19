@@ -13,12 +13,10 @@ void USB_EP0_IN(void);
 void USB_EP0_OUT(void);
 
 // EP1
-#define EP1_ADDR 0x000A
-extern_xdatabuf(EP1_ADDR, Ep1Buffer);
-void USB_EP1_IN(void);
+// Always reply NAK for in transactions
 
 // EP2
-#define EP2_ADDR 0x004A
+#define EP2_ADDR 0x0008
 extern_xdatabuf(EP2_ADDR, Ep2Buffer);
 #define EP2_SIZE 64
 #define EP2_RX_BUF (Ep2Buffer)
@@ -44,7 +42,7 @@ void NOP_Process(void);
 		
 // IN
 #define EP0_IN_Callback USB_EP0_IN
-#define EP1_IN_Callback USB_EP1_IN
+#define EP1_IN_Callback NOP_Process
 #define EP2_IN_Callback USB_EP2_IN
 #define EP3_IN_Callback NOP_Process
 #define EP4_IN_Callback NOP_Process

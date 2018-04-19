@@ -50,8 +50,8 @@ void USBDevice_Init() {
 	UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;		// SETUP/OUT -> ACK, IN -> NAK
     
 	//Configure Endpoint 1
-	UEP1_DMA_L = (uint8_t) Ep1Buffer; // Address of Endpoint 1 buffer
-    //UEP4_1_MOD = UEP4_1_MOD & ~bUEP1_BUF_MOD | bUEP1_TX_EN;
+	// This interrupt endpoint is used to notify the host about line-state changes
+	// To save memory, we reply NAK for IN transactions
 	UEP4_1_MOD &=~bUEP1_BUF_MOD;	//See table 16.3.3
 	UEP4_1_MOD |= bUEP1_TX_EN;		// EP1 Tx only, 64 bytes of buffer
 	// Enable DATA0/DATA1 toggling, Reply NAK for IN transactions

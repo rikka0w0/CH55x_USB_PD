@@ -5,9 +5,7 @@
 
 #define MAX_PACKET_SIZE 64
 
-// The buffer (Tx and Rx) must have an even address, size: 64 (0x42)
-xdatabuf(EP1_ADDR, Ep1Buffer, 64);
-// The buffer (Tx and Rx) must have an even address, size: 128 (0x84)
+// The buffer (Tx and Rx) must have an even address, size: 128 (0x80)
 xdatabuf(EP2_ADDR, Ep2Buffer, EP2_SIZE + EP2_SIZE);	// Rx + Tx
 
 uint8_t USB_EP_HALT_SET(uint8_t ep) {

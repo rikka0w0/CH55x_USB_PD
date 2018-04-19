@@ -12,8 +12,8 @@
 
 #define USB_ENDP0_SIZE         DEFAULT_ENDP0_SIZE
 
-// The buffer (Tx and Rx) must have an even address, size: 10 (0x0A)
-xdatabuf(EP0_ADDR, Ep0Buffer, 8 > (USB_ENDP0_SIZE + 2) ? 8 : (USB_ENDP0_SIZE + 2));
+// The buffer (Tx and Rx) must have an even address, size: 8 (0x08)
+xdatabuf(EP0_ADDR, Ep0Buffer, DEFAULT_ENDP0_SIZE);
 
 #define UsbSetupBuf ((PUSB_SETUP_REQ)Ep0Buffer)
 
@@ -144,7 +144,7 @@ void USB_EP0_SETUP(void) {
 					case GET_LINE_CODING:   //0x21  currently configured
 						pDescr = LineCoding;
 						len = LINECODING_SIZE;
-						len = SetupLen >= DEFAULT_ENDP0_SIZE ? DEFAULT_ENDP0_SIZE : SetupLen;  // 本次传输长度
+						len = SetupLen >= DEFAULT_ENDP0_SIZE ? DEFAULT_ENDP0_SIZE : SetupLen;
 						memcpy(Ep0Buffer, pDescr, len);
 						SetupLen -= len;
 						pDescr += len;
@@ -219,7 +219,7 @@ void USB_EP0_OUT(void) {
 			CDC_SetBaud();
 
 			UEP0_T_LEN = 0;
-			UEP0_CTRL |= UEP_R_RES_ACK | UEP_T_RES_ACK;  // 准备上传0包
+			UEP0_CTRL |= UEP_R_RES_ACK | UEP_T_RES_ACK;
 		}
 	}
 

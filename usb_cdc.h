@@ -16,7 +16,7 @@
 #define CDC_STATE_IDLE 0
 
 
-#define LINECODING_ADDR 0xCA
+#define LINECODING_ADDR 0x88
 #define LINECODING_SIZE 7
 extern_xdatabuf(LINECODING_ADDR, LineCoding);
 extern uint32_t CDC_Baud;
