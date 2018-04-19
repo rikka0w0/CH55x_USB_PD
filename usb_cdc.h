@@ -15,10 +15,8 @@
 // CDC Rx state machine
 #define CDC_STATE_IDLE 0
 
+
 extern uint32_t CDC_Baud;
-
-
-#define CDC_PUTCHARBUF_LEN  16
 
 void CDC_InitBaud(void);
 void CDC_SetBaud(void);

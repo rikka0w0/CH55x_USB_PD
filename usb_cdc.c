@@ -7,9 +7,7 @@
 #include "ch554_platform.h"
 
 
-
 // CDC Tx
-idata uint8_t  CDC_PutCharBuf[CDC_PUTCHARBUF_LEN];	// The buffer for CDC_PutChar
 idata volatile uint8_t CDC_PutCharBuf_Last = 0;		// Point to the last char in the buffer
 idata volatile uint8_t CDC_PutCharBuf_First = 0;	// Point to the first char in the buffer
 idata volatile uint8_t CDC_Tx_Busy  = 0;

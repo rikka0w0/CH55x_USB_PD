@@ -22,13 +22,15 @@ void USBInterrupt(void);
 #define EP0_ADDR 			0x0012
 #define LINECODING_ADDR 	0x001C
 #define EP2_TX_ADDR 		EP2_RX_ADDR+64
+#define CDC_PUTCHARBUF_ADDR 0x0050
 
 #define EP2_SIZE 16
 #define LINECODING_SIZE 7
+#define CDC_PUTCHARBUF_LEN  16
 
 extern_xdatabuf(EP2_RX_ADDR, EP2_RX_BUF);
 extern_xdatabuf(EP0_ADDR, Ep0Buffer);
 extern_xdatabuf(LINECODING_ADDR, LineCoding);
 extern_xdatabuf(EP2_TX_ADDR, EP2_TX_BUF);
-
+extern_xdatabuf(CDC_PUTCHARBUF_ADDR, CDC_PutCharBuf);
 #endif

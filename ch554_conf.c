@@ -141,3 +141,4 @@ xdatabuf(EP2_RX_ADDR, EP2_RX_BUF, EP2_SIZE + 2);		// EP2 Rx
 xdatabuf(EP0_ADDR, Ep0Buffer, DEFAULT_ENDP0_SIZE + 2);	// EP0 Rx+Tx
 xdatabuf(LINECODING_ADDR, LineCoding, LINECODING_SIZE);	// LindCoding buffer
 xdatabuf(EP2_TX_ADDR, EP2_TX_BUF, EP2_SIZE);			// EP2 Tx
+xdatabuf(CDC_PUTCHARBUF_ADDR, CDC_PutCharBuf, CDC_PUTCHARBUF_LEN);	// The buffer for CDC_PutChar
