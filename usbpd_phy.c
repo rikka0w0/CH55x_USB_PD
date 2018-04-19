@@ -8,7 +8,7 @@
 SBIT(USBPD_CC_PIN, GPIO1, 4);
 SBIT(LED, GPIO1, 7);
 
-xdatabuf(0xD1, USBPD_RawDatBuf, 512);
+xdatabuf(0xD1, USBPD_RawDatBuf, PD_MAX_RAW_SIZE);
 uint8_t* USBPD_RawDatBuf_End;
 uint8_t USBPD_ConnectionStatus;
 uint8_t USBPD_PortStatus;
@@ -44,13 +44,13 @@ void USBPD_Rx_InterruptHandler(void) {
 	IE_GPIO = 0;
 
 	TR0 = 1;	// Enable Timer0
-
+	F1 = 0;
 	__asm
 	mov	dpl,#_USBPD_RawDatBuf
 	mov	dph,#(_USBPD_RawDatBuf >> 8)
 	__endasm;
 
-	for (uint8_t i=0; i<60; i++) {
+	for (uint8_t i=0; i<PD_MAX_RAW_SIZE/4; i++) {
 		while (USBPD_CC_PIN && !TF0);
 		__asm
 		clr	_LED
@@ -95,7 +95,7 @@ void USBPD_Rx_InterruptHandler(void) {
 	__endasm;
 
 	TR0 = 0;
-
+	F1 = TF0;
 
 	USBPD_PortStatus = USBPD_STATUS_RECEIVED;
 }
@@ -160,6 +160,7 @@ void USBPD_DFP_Init(void) {
 }
 
 void USBPD_DFP_CC_Poll() {
+	uint8_t* msg_start;
 	uint8_t len;
 	uint8_t last;
 	uint8_t cur;
@@ -188,34 +189,11 @@ void USBPD_DFP_CC_Poll() {
 		}
 	} else if (USBPD_PortStatus == USBPD_STATUS_RECEIVED) {
 		USBPD_PortStatus = USBPD_STATUS_IDLE;
-
-		len = USBPD_RawDatBuf_End - USBPD_RawDatBuf;
-		CDC_PutChar(len);
-
-		last = USBPD_RawDatBuf[0];
-		for (uint8_t i=1; i<len; i++) {
-			cur = USBPD_RawDatBuf[i];
-			if (cur > last) {
-				last = cur - last;
-			} else {
-				last = 255 - last;
-				last += cur;
-				last ++;
-			}
-
-			// Decision rule: (3.03+3.07)/2/2*1.5=2.52375uS, ~60 cycles
-			if (last < 60) {
-				i++;
-				// Assume next is another narrow pulse
-				// Two narrow pulse -> An change in the middle of a frame-> 1
-				last = USBPD_RawDatBuf[i];
-				CDC_PutChar(1);
-			} else {
-				last = cur;
-				CDC_PutChar(0);
-			}
-
-
+		CDC_PutChar(F1);
+		msg_start = USBPD_RawDatBuf;
+		while(msg_start < USBPD_RawDatBuf_End) {
+			CDC_PutChar(*msg_start);
+			msg_start++;
 		}
 	}
 }
