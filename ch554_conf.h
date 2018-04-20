@@ -20,7 +20,7 @@ void USBInterrupt(void);
 // XRAM Allocation
 #define EP2_RX_ADDR 		0x0000
 #define EP0_ADDR 			0x0012
-#define LINECODING_ADDR 	0x001C
+#define LINECODING_ADDR 	0x0038
 #define EP2_TX_ADDR 		EP2_RX_ADDR+64
 #define CDC_PUTCHARBUF_ADDR 0x0050
 

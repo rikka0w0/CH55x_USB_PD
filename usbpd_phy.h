@@ -10,6 +10,12 @@
 #define PD_BIT_LEN 428
 #define PD_MAX_RAW_SIZE (PD_BIT_LEN*2)
 
+#define PD_RX_SOP				0xFA
+#define PD_RX_SOPP				0xFB
+#define PD_RX_SOPPP				0xFC
+#define PD_RX_ERR_HARD_RESET	0xFD
+#define PD_RX_ERR_CABLE_RESET	0xFE
+#define PD_RX_ERR_UNKNOWN		0xFF
 
 // USBPD_ConnectionStatus
 // Cable orientation
