@@ -81,38 +81,30 @@ void USBPD_Rx_InterruptHandler(void) {
 	for (uint8_t i=0; i<PD_MAX_RAW_SIZE/4; i++) {
 		while (USBPD_CC_PIN && !TF0);
 		__asm
-		clr	_LED
 		mov a, _TL0
 		movx @dptr, a
 		inc dptr
-		setb _LED
 		__endasm;
 
 		while (!USBPD_CC_PIN && !TF0);
 		__asm
-		clr	_LED
 		mov a, _TL0
 		movx @dptr, a
 		inc dptr
-		setb _LED
 		__endasm;
 
 		while (USBPD_CC_PIN && !TF0);
 		__asm
-		clr	_LED
 		mov a, _TL0
 		movx @dptr, a
 		inc dptr
-		setb _LED
 		__endasm;
 
 		while (!USBPD_CC_PIN && !TF0);
 		__asm
-		clr	_LED
 		mov a, _TL0
 		movx @dptr, a
 		inc dptr
-		setb _LED
 		__endasm;
 	}
 
@@ -234,7 +226,7 @@ void PD_Rx_Decode() {
 	*rx_ptr = byte;
 	if (byte != PD_RX_SOP)
 		return;
-
+	LED=1;
 	// Decoding
 	*rx_ptr = PD_RX_ERR_UNKNOWN;
 	rx_ptr++;
@@ -330,12 +322,15 @@ void USBPD_DFP_CC_Poll() {
 		}
 	} else if (USBPD_PortStatus == USBPD_STATUS_RECEIVED) {
 		USBPD_PortStatus = USBPD_STATUS_IDLE;
+		IE=0;
+		LED=0;
 		PD_Rx_Decode();
 		len = *PD_RawDatBuf;
+		crc = crc32_fast(PD_RawDatBuf + 1, len - 4);
+		IE=1;
 		for (uint8_t i=0; i<=len; i++) {
 			CDC_Hex(PD_RawDatBuf[i]);
 		}
-		crc = crc32_fast(PD_RawDatBuf + 1, len - 4);
 		if (
 				U32B0(crc) == PD_RawDatBuf[len-3] &&
 				U32B1(crc) == PD_RawDatBuf[len-2] &&
